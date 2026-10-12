@@ -1,4 +1,4 @@
-#Reinforcement Learning: An introduction by Sutton & Barto
+# Reinforcement Learning: An introduction by Sutton & Barto
 
 This is my repository for solving examples by code from the book Sutton and Barto 
 
@@ -26,3 +26,27 @@ Here's some trajectories with noise = 0.1 injected! I was thinking of increasing
 
 ![training](images/racetrack/training.png)
 ![training curves](images/racetrack/racetrack_training_curves.png)
+
+
+## Windy Gridworld problem (Example 6.5 Temporal Difference Learning)
+
+![alt text](images/windy_gridworld/example_65.png)
+![alt text](images/windy_gridworld/exercise610.png)
+
+Soo it's a relatively easier gridworld, I use 3 different action modes 4, 8, 9 which represent action_space size. 4 meaning classic up down left right, 8 includes diagonal actions, while 9 also includes a 0,0 action that is stay still.
+
+![alt text](images/windy_gridworld/base_training_graph.png)
+
+This graph shows a cool property of TD learning, it explores till around 2000 episodes while no results/termination. Monte Carlo would've failed in such a setting since it needs the final estimate of G, while this is bootstrap of return G. that is, Monte Carlo would require the episode to end to actually have a reward signal while here it uses estimates. 
+
+Then there's policies learnt for different modes
+
+### Actions mode = 4
+approximate steps = 15
+![alt text](images/windy_gridworld/trajectory_mode4.png)
+### Actions mode = 8
+approximate steps = 8
+![alt text](images/windy_gridworld/trajectory_mode8.png)
+### Actions mode = 9
+approximate steps = 8
+![alt text](images/windy_gridworld/trajectory_mode9.png)
