@@ -133,3 +133,83 @@ def draw_greedy_policy_windygrid(Q, moves, wind, height, start, goal, paths=None
                 ax.text(x + 0.44, y + 0.44, f"{q.max():.0f}", ha="right", va="bottom",
                         fontsize=6, color="#333333")
     return ax
+
+def draw_cliffwalking(width, height, start, goal, cliff,
+                      paths=None, ax=None, title=None, cell=0.8):
+    """
+    width, height : Grid dimensions
+    start, goal   : (x, y) coordinates
+    cliff         : List of (x, y) cliff cells
+    paths         : {"name": (list_of_(x, y)_cells, color)}
+    ax            : Existing matplotlib axis, optional
+    title         : Plot title
+    cell          : Cell size
+
+    Colors: red = start, green = goal, grey = cliff, white = safe.
+    """
+
+    from matplotlib.colors import to_rgb
+    from matplotlib.patches import Patch
+
+    if ax is None:
+        _, ax = plt.subplots(
+            figsize=(width * cell + 2, height * cell + 1)
+        )
+
+    # Background
+    img = np.full((height, width, 3), to_rgb("white"))
+
+    for x, y in cliff:
+        img[y, x] = to_rgb("#808080")
+
+    img[start[1], start[0]] = to_rgb("#c97a7a")
+    img[goal[1], goal[0]] = to_rgb("#7aaf8c")
+
+    ax.imshow(img, origin="upper", interpolation="nearest")
+
+    # Start and goal labels
+    ax.text(*start, "S", ha="center", va="center", fontweight="bold")
+    ax.text(*goal, "G", ha="center", va="center", fontweight="bold")
+
+    # Trajectories
+    for name, (cells, color) in (paths or {}).items():
+        if not cells:
+            continue
+
+        xs, ys = zip(*cells)
+        ax.plot(xs, ys, "-o", color=color, ms=3.5, lw=1.5, label=name)
+
+    # Grid
+    ax.set_xticks(range(width))
+    ax.set_yticks(range(height))
+    ax.set_xticks(np.arange(-0.5, width, 1), minor=True)
+    ax.set_yticks(np.arange(-0.5, height, 1), minor=True)
+
+    ax.grid(which="minor", color="#bbbbbb", lw=0.6)
+    ax.tick_params(which="minor", length=0)
+    ax.set_xlim(-0.5, width - 0.5)
+    ax.set_ylim(height - 0.5, -0.5)
+
+    # Legend
+    handles = [
+        Patch(facecolor="#c97a7a", edgecolor="black", label="Start"),
+        Patch(facecolor="#7aaf8c", edgecolor="black", label="Goal"),
+        Patch(facecolor="#808080", edgecolor="black", label="Cliff"),
+    ]
+
+    if paths:
+        from matplotlib.lines import Line2D
+
+        handles.extend(
+            Line2D([0], [0], color=color, marker="o",
+                   lw=1.5, label=name)
+            for name, (_, color) in paths.items()
+        )
+
+    ax.legend(handles=handles, loc="upper left",
+              bbox_to_anchor=(1.01, 1), fontsize=8)
+
+    if title:
+        ax.set_title(title)
+
+    return ax

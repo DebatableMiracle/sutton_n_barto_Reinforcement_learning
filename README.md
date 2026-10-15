@@ -50,3 +50,5 @@ approximate steps = 8
 ### Actions mode = 9
 approximate steps = 8
 ![alt text](images/windy_gridworld/trajectory_mode9.png)
+
+## Cliffwalking Problem
